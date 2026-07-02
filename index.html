@@ -6,71 +6,159 @@
     <title>Records News — Книга Рекордов Minecraft СНГ</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        * { box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+        }
+        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: #111823;
             color: #ffffff;
             margin: 0;
             padding: 16px;
-            padding-bottom: 90px;
+            padding-bottom: 95px;
         }
-        .header { text-align: center; margin-bottom: 24px; padding-top: 10px; }
+
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+            padding-top: 10px;
+        }
+
         .header h1 {
-            font-size: 26px; margin: 0 0 8px 0; text-transform: uppercase;
-            letter-spacing: 1.5px; color: #00e676; text-shadow: 0 2px 8px rgba(0,230,118,0.3);
+            font-size: 26px;
+            margin: 0 0 8px 0;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #00e676;
+            text-shadow: 0 2px 8px rgba(0,230,118,0.3);
             font-weight: 800;
         }
-        .header p { color: #b1c3d4; font-size: 14px; margin: 0; opacity: 0.9; }
+
+        .header p {
+            color: #b1c3d4;
+            font-size: 14px;
+            margin: 0;
+            opacity: 0.9;
+        }
+
         .category-section {
-            background-color: #18222d; border-radius: 14px; padding: 18px;
-            margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            background-color: #18222d;
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
             border: 1px solid rgba(255,255,255,0.05);
         }
+
         .category-title {
-            font-size: 15px; font-weight: bold; margin-top: 0; margin-bottom: 14px;
-            color: #b1c3d4; text-transform: uppercase; letter-spacing: 0.5px;
-            border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;
+            font-size: 15px;
+            font-weight: bold;
+            margin-top: 0;
+            margin-bottom: 14px;
+            color: #b1c3d4;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 8px;
         }
-        .record-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .record-item:last-child { border-bottom: none; }
-        .record-info { flex: 1; padding-right: 12px; }
-        .record-name { font-size: 14px; font-weight: 500; line-height: 1.3; margin-bottom: 4px; color: #ffffff; }
-        .record-holder { font-size: 12px; color: #00e676; font-weight: 600; }
+
+        .record-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .record-item:last-child {
+            border-bottom: none;
+        }
+
+        .record-info {
+            flex: 1;
+            padding-right: 12px;
+        }
+
+        .record-name {
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 1.3;
+            margin-bottom: 4px;
+            color: #ffffff;
+        }
+
+        .record-holder {
+            font-size: 12px;
+            color: #00e676;
+            font-weight: 600;
+        }
+
         .record-value {
-            font-size: 15px; font-weight: 700; text-align: right; white-space: nowrap; color: #ffffff;
-            background: rgba(255,255,255,0.03); padding: 4px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05);
+            font-size: 14px;
+            font-weight: 700;
+            text-align: right;
+            white-space: nowrap;
+            color: #ffffff;
+            background: rgba(255,255,255,0.05);
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.05);
         }
-        .fixed-btn-container { position: fixed; bottom: 0; left: 0; right: 0; padding: 16px; background: linear-gradient(to top, #111823 80%, transparent); z-index: 1000; }
+
+        .fixed-btn-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 16px;
+            background: linear-gradient(to top, #111823 80%, transparent);
+            z-index: 1000;
+        }
+
         .action-btn {
-            display: block; width: 100%; background-color: #00e676; color: #000000; border: none; border-radius: 12px;
-            padding: 15px; font-size: 16px; font-weight: bold; text-align: center; text-decoration: none;
-            box-shadow: 0 4px 16px rgba(0,230,118,0.3); transition: transform 0.1s, background-color 0.2s;
+            display: block;
+            width: 100%;
+            background-color: #00e676;
+            color: #000000;
+            border: none;
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            box-shadow: 0 4px 16px rgba(0,230,118,0.3);
+            transition: transform 0.1s, background-color 0.2s;
         }
-        .action-btn:active { transform: scale(0.98); background-color: #00c853; }
+
+        .action-btn:active {
+            transform: scale(0.98);
+            background-color: #00c853;
+        }
     </style>
 </head>
 <body>
 
     <div class="header">
         <h1>RECORDS NEWS</h1>
-        <p>Официальный реестр рекордов Minecraft в СНГ</p>
+        <p>Официальный реестр рекордных событий и инфоповодов</p>
     </div>
 
     <div class="category-section">
-        <div class="category-title">🎥 Культура и Медиа</div>
+        <div class="category-title">🎥 Культура и Кроссоверы</div>
         
         <div class="record-item">
             <div class="record-info">
-                <div class="record-name">Голоса ютуберов в Mewgenics (5opka, Obsidian Time, v_muted...)</div>
+                <div class="record-name">Голоса СНГ ютуберов в Mewgenics (5opka, Obsidian Time, v_muted, OptimistEzz...)</div>
                 <div class="record-holder">Observer News</div>
             </div>
-            <div class="record-value">Кроссовер</div>
+            <div class="record-value">Озвучка</div>
         </div>
 
         <div class="record-item">
             <div class="record-info">
-                <div class="record-name">Самый долгий стрим без перерыва в СНГ</div>
+                <div class="record-name">Пиковый онлайн на СНГ стриме по Minecraft</div>
                 <div class="record-holder">Ожидает фиксации</div>
             </div>
             <div class="record-value">—</div>
@@ -82,7 +170,7 @@
         
         <div class="record-item">
             <div class="record-info">
-                <div class="record-name">Максимум дней в одном мире Hardcore</div>
+                <div class="record-name">Дней в одном мире Hardcore (СНГ)</div>
                 <div class="record-holder">Рекорд свободен</div>
             </div>
             <div class="record-value">0 дней</div>
@@ -90,16 +178,20 @@
     </div>
 
     <div class="fixed-btn-container">
-        <a href="#" id="submit-btn" class="action-btn">🏆 Подать заявку на рекорд</a>
+        <a href="#" id="submit-btn" class="action-btn">🏆 Подать заявку / Предложить новость</a>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
-        if (tg) { tg.ready(); tg.expand(); }
+        if (tg) {
+            tg.ready();
+            tg.expand();
+        }
 
         document.getElementById('submit-btn').addEventListener('click', function(e) {
             e.preventDefault();
             const botLink = 'https://t.me/obsnewspaper'; 
+            
             if (tg && tg.openTelegramLink) {
                 tg.openTelegramLink(botLink); 
             } else {
