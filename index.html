@@ -3,200 +3,261 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Records News — Книга Рекордов Minecraft СНГ</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <title>RECORDS NEWS :: Независимый реестр рекордов</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Современный технологичный стиль -->
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    
     <style>
-        * {
-            box-sizing: border-box;
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background-color: #0d0e11;
+            background-image: 
+                radial-gradient(at 10% 10%, rgba(212, 175, 55, 0.04) 0px, transparent 40%),
+                radial-gradient(at 90% 90%, rgba(239, 68, 68, 0.04) 0px, transparent 40%);
+        }
+        h1, h2, h3, h4, .heading-font {
+            font-family: 'Unbounded', sans-serif;
         }
         
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #111823;
-            color: #ffffff;
-            margin: 0;
-            padding: 16px;
-            padding-bottom: 95px;
+        /* Скроллбар */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0d0e11; }
+        ::-webkit-scrollbar-thumb { background: #1f222a; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #d4af37; }
+        
+        /* Стильные бруталистичные карточки */
+        .record-card {
+            border: 2px solid #1f222a;
+            background-color: #13151a;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease;
+        }
+        .record-card:hover {
+            border-color: #3f4454;
+        }
+        /* Состояние, когда вкладка открыта */
+        .record-card.active {
+            border-color: #d4af37;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.05);
         }
 
-        .header {
-            text-align: center;
-            margin-bottom: 24px;
-            padding-top: 10px;
+        /* Плавное раскрытие контента */
+        .accordion-content {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows 0.3s ease-in-out, opacity 0.25s ease-in-out;
+            opacity: 0;
+        }
+        .record-card.active .accordion-content {
+            grid-template-rows: 1fr;
+            opacity: 1;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-t: 1px solid #1f222a;
+        }
+        .accordion-inner {
+            overflow: hidden;
         }
 
-        .header h1 {
-            font-size: 26px;
-            margin: 0 0 8px 0;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: #00e676;
-            text-shadow: 0 2px 8px rgba(0,230,118,0.3);
-            font-weight: 800;
+        /* Индикатор поворота стрелки */
+        .arrow-trigger {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s;
         }
-
-        .header p {
-            color: #b1c3d4;
-            font-size: 14px;
-            margin: 0;
-            opacity: 0.9;
-        }
-
-        .category-section {
-            background-color: #18222d;
-            border-radius: 14px;
-            padding: 18px;
-            margin-bottom: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .category-title {
-            font-size: 15px;
-            font-weight: bold;
-            margin-top: 0;
-            margin-bottom: 14px;
-            color: #b1c3d4;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            padding-bottom: 8px;
-        }
-
-        .record-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .record-item:last-child {
-            border-bottom: none;
-        }
-
-        .record-info {
-            flex: 1;
-            padding-right: 12px;
-        }
-
-        .record-name {
-            font-size: 14px;
-            font-weight: 500;
-            line-height: 1.3;
-            margin-bottom: 4px;
-            color: #ffffff;
-        }
-
-        .record-holder {
-            font-size: 12px;
-            color: #00e676;
-            font-weight: 600;
-        }
-
-        .record-value {
-            font-size: 14px;
-            font-weight: 700;
-            text-align: right;
-            white-space: nowrap;
-            color: #ffffff;
-            background: rgba(255,255,255,0.05);
-            padding: 4px 10px;
-            border-radius: 6px;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .fixed-btn-container {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 16px;
-            background: linear-gradient(to top, #111823 80%, transparent);
-            z-index: 1000;
-        }
-
-        .action-btn {
-            display: block;
-            width: 100%;
-            background-color: #00e676;
-            color: #000000;
-            border: none;
-            border-radius: 12px;
-            padding: 15px;
-            font-size: 16px;
-            font-weight: bold;
-            text-align: center;
-            text-decoration: none;
-            box-shadow: 0 4px 16px rgba(0,230,118,0.3);
-            transition: transform 0.1s, background-color 0.2s;
-        }
-
-        .action-btn:active {
-            transform: scale(0.98);
-            background-color: #00c853;
+        .record-card.active .arrow-trigger {
+            transform: rotate(180deg);
+            color: #d4af37;
         }
     </style>
 </head>
-<body>
+<body class="text-gray-200 antialiased min-h-screen flex flex-col justify-between">
 
-    <div class="header">
-        <h1>RECORDS NEWS</h1>
-        <p>Официальный реестр рекордных событий и инфоповодов</p>
-    </div>
+    <!-- НАВИГАЦИЯ -->
+    <nav class="border-b border-zinc-800 bg-[#0d0e11]/90 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                <span class="heading-font font-black text-lg tracking-wider text-white">RECORDS<span class="text-[#d4af37]">.</span>NEWS</span>
+            </div>
+            <div class="flex items-center gap-6">
+                <a href="#records" class="text-xs font-medium uppercase tracking-wider hover:text-[#d4af37] transition-colors">База рекордов</a>
+                <a href="#submit" class="bg-[#d4af37] text-black px-5 py-2.5 text-xs heading-font font-bold hover:bg-white transition-all transform active:scale-95">ПОДАТЬ ЗАЯВКУ</a>
+            </div>
+        </div>
+    </nav>
 
-    <div class="category-section">
-        <div class="category-title">🎥 Культура и Кроссоверы</div>
+    <!-- ГЛАВНЫЙ БАННЕР -->
+    <header class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-12 text-center">
+        <p class="text-[10px] uppercase tracking-widest text-zinc-500 mb-3 font-bold">Независимый медиа-реестр достижений</p>
+        <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight leading-none mb-6">
+            КНИГА РЕКОРДОВ <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-[#d4af37] via-amber-200 to-yellow-500">RECORDS NEWS</span>
+        </h1>
+        <p class="max-w-2xl mx-auto text-xs sm:text-sm text-zinc-400 font-medium leading-relaxed">
+            Архивация сложнейших технических, хардкорных и социальных достижений игрового сообщества. Нажмите на любую карточку, чтобы изучить отчет и посмотреть видео.
+        </p>
+    </header>
+
+    <!-- БАЗА РЕКОРДОВ -->
+    <main id="records" class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full space-y-6">
         
-        <div class="record-item">
-            <div class="record-info">
-                <div class="record-name">Голоса СНГ ютуберов в Mewgenics (5opka, Obsidian Time, v_muted, OptimistEzz...)</div>
-                <div class="record-holder">Observer News</div>
-            </div>
-            <div class="record-value">Озвучка</div>
+        <div class="flex items-center justify-between border-b border-zinc-800 pb-4 mb-2">
+            <h2 class="heading-font text-sm font-bold tracking-wider text-zinc-400 uppercase">Верифицированные логи</h2>
+            <span class="text-xs text-zinc-600 font-mono">Всего записей: 1,142</span>
         </div>
 
-        <div class="record-item">
-            <div class="record-info">
-                <div class="record-name">Пиковый онлайн на СНГ стриме по Minecraft</div>
-                <div class="record-holder">Ожидает фиксации</div>
+        <!-- СПИСОК РЕКОРДОВ (АККОРДЕОН) -->
+        <div class="space-y-4">
+            
+            <!-- РЕКОРД 1 -->
+            <div class="record-card p-6 cursor-pointer" onclick="toggleRecord(this)">
+                <!-- Шапка карточки -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 select-none">
+                    <div class="flex items-start sm:items-center gap-4">
+                        <span class="text-[9px] bg-red-950/60 border border-red-800 text-red-400 px-2 py-1 font-bold tracking-wider uppercase rounded">Выживание</span>
+                        <div>
+                            <h3 class="text-sm sm:text-base font-bold text-white transition-colors hover:text-[#d4af37]">1500 дней на хардкоре в замкнутом пространстве 3х3</h3>
+                            <p class="text-xs text-zinc-500 mt-1 font-mono">Рекордсмен: <span class="text-zinc-300">@ShadowVash</span></p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between sm:justify-end gap-6 border-t sm:border-t-0 border-zinc-800/50 pt-3 sm:pt-0">
+                        <div class="sm:text-right font-mono">
+                            <span class="text-[10px] text-zinc-500 block uppercase">Результат</span>
+                            <span class="text-sm font-bold text-[#d4af37]">1,500 дней</span>
+                        </div>
+                        <div class="arrow-trigger text-zinc-600 font-light text-xl">▼</div>
+                    </div>
+                </div>
+
+                <!-- Выпадающая часть -->
+                <div class="accordion-content" onclick="event.stopPropagation();">
+                    <div class="accordion-inner grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Текстовое описание -->
+                        <div class="space-y-4 text-xs sm:text-sm text-zinc-400 leading-relaxed border-r border-zinc-800/40 pr-0 lg:pr-6">
+                            <h4 class="heading-font text-[11px] text-white tracking-wider uppercase text-zinc-300">[ Заключение экспертов ]</h4>
+                            <p>Игрок успешно изолировал персонажа в кубе 3х3 блока без прямого доступа к открытому миру. Все ресурсы, включая дерево, железо и редстоун, добывались путем сложнейшего менеджмента механик рейдов разбойников и кастомной фильтрации дропа мобов.</p>
+                            <div class="bg-zinc-900/40 p-3 border border-zinc-800/60 font-mono text-[11px] space-y-1">
+                                <p class="text-zinc-500">Проверка файлов: <span class="text-green-500">Чисто</span></p>
+                                <p class="text-zinc-500">Версия фиксации: <span class="text-zinc-300">Java 1.20.4</span></p>
+                            </div>
+                        </div>
+                        <!-- Видео-плеер -->
+                        <div class="w-full aspect-video bg-black border border-zinc-800 relative">
+                            <!-- Сюда вставляется ID нужного видеоролика (вместо dQw4w9WgXcQ) -->
+                            <iframe class="w-full h-full" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="record-value">—</div>
-        </div>
-    </div>
 
-    <div class="category-section">
-        <div class="category-title">🛡️ Выживание и Хардкор</div>
-        
-        <div class="record-item">
-            <div class="record-info">
-                <div class="record-name">Дней в одном мире Hardcore (СНГ)</div>
-                <div class="record-holder">Рекорд свободен</div>
+            <!-- РЕКОРД 2 -->
+            <div class="record-card p-6 cursor-pointer" onclick="toggleRecord(this)">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 select-none">
+                    <div class="flex items-start sm:items-center gap-4">
+                        <span class="text-[9px] bg-blue-950/60 border border-blue-800 text-blue-400 px-2 py-1 font-bold tracking-wider uppercase rounded">Редстоун</span>
+                        <div>
+                            <h3 class="text-sm sm:text-base font-bold text-white transition-colors hover:text-[#d4af37]">Полностью функционирующий 4-битный процессор</h3>
+                            <p class="text-xs text-zinc-500 mt-1 font-mono">Рекордсмен: <span class="text-zinc-300">@RedstonePro</span></p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between sm:justify-end gap-6 border-t sm:border-t-0 border-zinc-800/50 pt-3 sm:pt-0">
+                        <div class="sm:text-right font-mono">
+                            <span class="text-[10px] text-zinc-500 block uppercase">Результат</span>
+                            <span class="text-sm font-bold text-[#d4af37]">4-bit ALU</span>
+                        </div>
+                        <div class="arrow-trigger text-zinc-600 font-light text-xl">▼</div>
+                    </div>
+                </div>
+
+                <div class="accordion-content" onclick="event.stopPropagation();">
+                    <div class="accordion-inner grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="space-y-4 text-xs sm:text-sm text-zinc-400 leading-relaxed border-r border-zinc-800/40 pr-0 lg:pr-6">
+                            <h4 class="heading-font text-[11px] text-white tracking-wider uppercase text-zinc-300">[ Заключение экспертов ]</h4>
+                            <p>Архитектура вычислительного блока построена без использования командных блоков. Вычисления происходят на основе задержек логических вентилей (AND, OR, NOT, XOR), реализованных через стандартные факелы и повторители.</p>
+                            <div class="bg-zinc-900/40 p-3 border border-zinc-800/60 font-mono text-[11px] space-y-1">
+                                <p class="text-zinc-500">Кол-во механизмов: <span class="text-zinc-300">~14,000 блоков</span></p>
+                                <p class="text-zinc-500">Тактовая частота: <span class="text-zinc-300">0.5 Гц</span></p>
+                            </div>
+                        </div>
+                        <div class="w-full aspect-video bg-black border border-zinc-800">
+                            <iframe class="w-full h-full" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="record-value">0 дней</div>
+
         </div>
-    </div>
+    </main>
 
-    <div class="fixed-btn-container">
-        <a href="#" id="submit-btn" class="action-btn">🏆 Подать заявку / Предложить новость</a>
-    </div>
+    <!-- ФОРМА ОТПРАВКИ -->
+    <section id="submit" class="border-t border-zinc-800 bg-[#0a0b0d] py-16 w-full">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-10">
+                <h2 class="heading-font text-xl font-black text-white mb-2">ПОДАТЬ ЗАЯВКУ НА РЕКОРД</h2>
+                <p class="text-xs text-zinc-500 font-medium">Заполните технические параметры вашего достижения для проведения экспертизы.</p>
+            </div>
 
+            <form id="recordForm" class="space-y-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-2">Ваш Никнейм</label>
+                        <input type="text" required placeholder="Например: Ovie" class="w-full bg-[#13151a] border border-zinc-800 p-3 text-sm text-white focus:outline-none focus:border-[#d4af37] transition-colors rounded">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-2">Категория</label>
+                        <select class="w-full bg-[#13151a] border border-zinc-800 p-3 text-sm text-zinc-400 focus:outline-none focus:border-[#d4af37] focus:text-white transition-colors rounded">
+                            <option>Выживание / Ванилла</option>
+                            <option>Технические / Редстоун постройки</option>
+                            <option>Мини-игры / Спидран</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-2">Ссылка на видеодоказательство (YouTube)</label>
+                    <input type="url" required placeholder="https://www.youtube.com/watch?v=..." class="w-full bg-[#13151a] border border-zinc-800 p-3 text-sm text-white focus:outline-none focus:border-[#d4af37] transition-colors rounded">
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-2">Описание процесса и таймкоды</label>
+                    <textarea rows="4" required placeholder="Опишите детально, как был достигнут результат и укажите ключевые моменты на видео." class="w-full bg-[#13151a] border border-zinc-800 p-3 text-sm text-white focus:outline-none focus:border-[#d4af37] transition-colors resize-none rounded"></textarea>
+                </div>
+
+                <div class="p-4 bg-zinc-900/20 border border-zinc-800/50 flex items-start gap-3 rounded">
+                    <input type="checkbox" required id="rules" class="mt-1 accent-[#d4af37]">
+                    <label for="rules" class="text-[11px] text-zinc-500 leading-normal">Я гарантирую подлинность предоставленных видеоматериалов и логов и соглашаюсь на проведение внутренней проверки.</label>
+                </div>
+
+                <button type="submit" class="w-full bg-white text-black p-4 heading-font font-black tracking-wider text-xs hover:bg-[#d4af37] transition-colors transform active:scale-[0.99] rounded">
+                    ОТПРАВИТЬ НА ВЕРИФИКАЦИЮ
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- ПОДВАЛ -->
+    <footer class="border-t border-zinc-900 bg-[#0d0e11] py-6 text-center text-[10px] text-zinc-600">
+        <p>&copy; 2026 RECORDS NEWS. Независимый проект сообщества. Не связано с Mojang Studios.</p>
+    </footer>
+
+    <!-- СКРИПТ АНИМАЦИИ ВКЛАДОК -->
     <script>
-        const tg = window.Telegram.WebApp;
-        if (tg) {
-            tg.ready();
-            tg.expand();
+        function toggleRecord(card) {
+            const isActive = card.classList.contains('active');
+            
+            // Сначала закрываем все карточки, чтобы видео в других вкладках не мешало
+            document.querySelectorAll('.record-card').forEach(c => c.classList.remove('active'));
+            
+            // Если карточка не была активной, открываем её
+            if (!isActive) {
+                card.classList.add('active');
+            }
         }
 
-        document.getElementById('submit-btn').addEventListener('click', function(e) {
+        // Обработка формы
+        document.getElementById('recordForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const botLink = 'https://t.me/obsnewspaper'; 
-            
-            if (tg && tg.openTelegramLink) {
-                tg.openTelegramLink(botLink); 
-            } else {
-                window.open(botLink, '_blank');
-            }
+            alert('Заявка успешно отправлена в систему RECORDS NEWS!');
+            this.reset();
         });
     </script>
 </body>
